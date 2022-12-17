@@ -1,0 +1,292 @@
+openapi: 3.0.0
+info:
+  title: Counter API
+  description: "This is a simple API for [counter](https://github.com/plantree/counter)"
+  contact:
+    email: eric.wangpy@outlook.com
+  license:
+    name: MIT License
+    url: http://opensource.org/licenses/MIT
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/plantree/counter/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: developers
+  description: Operations available to regular developers
+paths:
+  /pv/status:
+    get:
+      tags:
+      - developers
+      description: |
+        By passing parameters, you can get status of given key in given namespace
+      operationId: getPv
+      parameters:
+      - name: namespace
+        in: query
+        description: namespace to get status
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: key
+        in: query
+        description: key to get status (without this parameter will return all keys
+          in the namespace)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: get status of PV successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "400":
+          description: bad input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: "4001,"
+                err_msg: this namespace or key doesn't exist
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: 5001
+                err_msg: server error
+  /pv/create:
+    post:
+      tags:
+      - developers
+      description: |
+        By passing parameters, you can create a namespace for PV with an secret
+      operationId: createPv
+      parameters:
+      - name: namespace
+        in: query
+        description: namespace to create
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: secret
+        in: query
+        description: secret is needed when you want to update the value (default the
+          same as namepsace)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: create namespace of PV successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "400":
+          description: bad input parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: "4001,"
+                err_msg: this namespace has already been created
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: 5001
+                err_msg: server error
+  /pv/increment:
+    post:
+      tags:
+      - developers
+      description: |
+        By passing parameters, you can increment PV by 1 of given key in given namespace
+      operationId: incrementPv
+      parameters:
+      - name: namespace
+        in: query
+        description: namespace to be incremented
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: key
+        in: query
+        description: key to be incremented
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: increment PV successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "400":
+          description: bad input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: 4001
+                err_msg: invalid namespace
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: 5001
+                err_msg: server error
+  /pv/reset:
+    post:
+      tags:
+      - developers
+      description: |
+        By passing parameters, you can reset PV of given key in given namespace with given value
+      operationId: resetPv
+      parameters:
+      - name: namespace
+        in: query
+        description: namespace to be reset
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: key
+        in: query
+        description: key to be reset
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: value
+        in: query
+        description: number of PV to be reset
+        required: true
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: reset PV successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "400":
+          description: bad input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: 4001
+                err_msg: invalid namespace
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: 5001
+                err_msg: server error
+  /pv/delete:
+    post:
+      tags:
+      - developers
+      description: |
+        By passing parameters, you can delete of given key or given namespace
+      operationId: deletePv
+      parameters:
+      - name: namespace
+        in: query
+        description: namespace to be delete
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: key
+        in: query
+        description: key to be delete (without this field will cause namespace deleted)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: delete PV successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "400":
+          description: bad input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: 4001
+                err_msg: invalid namespace
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: 5001
+                err_msg: server error
+components:
+  schemas:
+    ErrorMessage:
+      required:
+      - code
+      - err_msg
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 0
+        err_msg:
+          type: string
+          example: successfully
+      example:
+        code: 0
+        err_msg: successfully
