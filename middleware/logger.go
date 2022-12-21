@@ -41,7 +41,6 @@ func (f *LogFormat) Format(entry *logrus.Entry) ([]byte, error) {
 	}
 
 	if entry.Message != "" {
-		b.WriteString("-")
 		b.WriteString(entry.Message)
 		b.WriteString(" ")
 	}
@@ -71,7 +70,6 @@ func NewLogger() *logrus.Logger {
 
 	// file to write
 	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
-	defer f.Close()
 	if err != nil {
 		fmt.Println("Open file failed. err:", err)
 	}
@@ -96,6 +94,10 @@ func NewLogger() *logrus.Logger {
 	)
 
 	return logger
+}
+
+func CleanLog() error {
+	return os.RemoveAll(config.LOG_FILE_PATH)
 }
 
 func LoggerMiddleware(logger *logrus.Logger) gin.HandlerFunc {

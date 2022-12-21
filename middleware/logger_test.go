@@ -22,7 +22,7 @@ func TestNewLogger(t *testing.T) {
 	if _, err := os.Stat(config.LOG_FILE_PATH); os.IsNotExist(err) {
 		t.Error("log file path not exist")
 	}
-	defer os.RemoveAll(config.LOG_FILE_PATH)
+	defer CleanLog()
 
 	fileName := path.Join(config.LOG_FILE_PATH, config.LOG_FILE_NAME)
 	file, err := os.Open(fileName)
