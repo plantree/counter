@@ -3,7 +3,7 @@
 all: build
 
 build:
-	cd cmd && go build -o ../build/counter-service
+	go build -o ./build/counter-service
 
 run: build 
 	./build/counter-service
