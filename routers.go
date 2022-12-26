@@ -42,28 +42,38 @@ func isNamespaceValid(namespace string, c *gin.Context) bool {
 }
 
 func constructKey(namespace, key string) string {
-	return fmt.Sprintf("%s-%s", namespace, key)
+	return fmt.Sprintf("%s@%s", namespace, key)
 }
 
 func checkNamespace(namespace string, c *gin.Context) bool {
-	if namespace == "" {
-		c.JSON(http.StatusBadRequest, "need namespace")
+	if namespace == "" || strings.Contains(namespace, "@") {
+		c.JSON(http.StatusBadRequest, "need namespace (namespace should not contain @)")
 		return false
 	}
 	return true
 }
 
 func checkNamespaceAndKey(namespace, key string, c *gin.Context) bool {
-	if namespace == "" || key == "" {
-		c.JSON(http.StatusBadRequest, "need namespace and key")
+	if namespace == "" || strings.Contains(namespace, "@") || key == "" {
+		c.JSON(http.StatusBadRequest, "need namespace and key (namespace should not contain @)")
 		return false
 	}
 	return true
 }
 
-func checkAll(namespace, secret, key, value string, c *gin.Context) bool {
-	if namespace == "" || secret == "" || key == "" || !isInt(value) {
-		c.JSON(http.StatusBadRequest, "need namespace, secret, key and valid value")
+func checkNamespaceSecretKey(namespace, secret, key string, c *gin.Context) bool {
+	if namespace == "" || strings.Contains(namespace, "@") ||
+		secret == "" || key == "" {
+		c.JSON(http.StatusBadRequest, "need namespace, secret and key (namespace should not contain @)")
+		return false
+	}
+	return true
+}
+
+func checkNamespaceSecretKeyValue(namespace, secret, key, value string, c *gin.Context) bool {
+	if namespace == "" || strings.Contains(namespace, "@") ||
+		secret == "" || key == "" || value == "" || !isInt(value) {
+		c.JSON(http.StatusBadRequest, "need namespace, secret, key and valid value (namespace should not contain @)")
 		return false
 	}
 	return true
@@ -95,7 +105,7 @@ func GetPv(c *gin.Context) {
 	key := c.Query("key")
 	// get all keys under namespace
 	if key == "" {
-		newKeys, err := G_db.GetPrefixMatchKeys(namespace + "*")
+		newKeys, err := G_db.GetPrefixMatchKeys(namespace + "@*")
 		if err != nil {
 			G_logger.Warn(err)
 			errMsg := ErrorMessage{
@@ -233,7 +243,9 @@ func ResetPv(c *gin.Context) {
 	secret := c.Query("secret")
 	key := c.Query("key")
 	value := c.Query("value")
-	checkAll(namespace, secret, key, value, c)
+	if ok := checkNamespaceSecretKeyValue(namespace, secret, key, value, c); !ok {
+		return
+	}
 
 	if ok := checkAuthentication(namespace, secret); !ok {
 		errMsg := ErrorMessage{
@@ -241,6 +253,7 @@ func ResetPv(c *gin.Context) {
 			ErrMsg: "authentication failed",
 		}
 		c.JSON(http.StatusBadRequest, errMsg)
+		return
 	}
 
 	newKey := constructKey(namespace, key)
@@ -262,8 +275,8 @@ func DeletePv(c *gin.Context) {
 	namespace := c.Query("namespace")
 	secret := c.Query("secret")
 	key := c.Query("key")
-	if namespace == "" || secret == "" || key == "" {
-		c.JSON(http.StatusBadRequest, "need namespace, secret and key")
+	if ok := checkNamespaceSecretKey(namespace, secret, key, c); !ok {
+		return
 	}
 
 	if ok := checkAuthentication(namespace, secret); !ok {
@@ -272,6 +285,7 @@ func DeletePv(c *gin.Context) {
 			ErrMsg: "authentication failed",
 		}
 		c.JSON(http.StatusBadRequest, errMsg)
+		return
 	}
 
 	newKey := constructKey(namespace, key)
