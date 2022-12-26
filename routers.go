@@ -314,7 +314,7 @@ func AddRouters(r *gin.Engine, logger *logrus.Logger) {
 	})
 
 	// api for PV
-	r.GET("/pv/status", GetPv)
+	r.GET("/pv/get", GetPv)
 
 	r.POST("/pv/create", CreatePv)
 

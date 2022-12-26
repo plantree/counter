@@ -1,284 +1,278 @@
 openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/plantree/counter/1.0.0
 info:
+  description: This is a simple API for [counter](https://github.com/plantree/counter)
+  version: "1.0.0"
   title: Counter API
-  description: "This is a simple API for [counter](https://github.com/plantree/counter)"
   contact:
     email: eric.wangpy@outlook.com
   license:
     name: MIT License
-    url: http://opensource.org/licenses/MIT
-  version: 1.0.0
-servers:
-- url: https://virtserver.swaggerhub.com/plantree/counter/1.0.0
-  description: SwaggerHub API Auto Mocking
+    url: 'http://opensource.org/licenses/MIT'
 tags:
-- name: developers
-  description: Operations available to regular developers
+  - name: developers
+    description: Operations available to regular developers
 paths:
-  /pv/status:
+  /pv/get:
     get:
       tags:
-      - developers
+        - developers
+      operationId: getPv
       description: |
         By passing parameters, you can get status of given key in given namespace
-      operationId: getPv
-      parameters:
-      - name: namespace
-        in: query
-        description: namespace to get status
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: key
-        in: query
-        description: key to get status (without this parameter will return all keys
-          in the namespace)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
+      parameters: 
+        - in: query
+          name: namespace 
+          description: namespace to get status
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: key
+          description: key to get status (without this parameter will return all keys under the namespace)
+          schema:
+            type: string
+          required: false
       responses:
-        "200":
+        '200':
           description: get status of PV successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "400":
-          description: bad input parameter
+        '400':
+          description: bad input parameter  
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
               example:
-                code: "4001,"
+                code: 4001,
                 err_msg: this namespace or key doesn't exist
-        "500":
+        '500':
           description: internal server error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-              example:
+              example: 
                 code: 5001
-                err_msg: server error
+                err_msg: server error    
+                
   /pv/create:
     post:
       tags:
-      - developers
+        - developers
+      operationId: createPv
       description: |
         By passing parameters, you can create a namespace for PV with an secret
-      operationId: createPv
-      parameters:
-      - name: namespace
-        in: query
-        description: namespace to create
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: secret
-        in: query
-        description: secret is needed when you want to update the value (default the
-          same as namepsace)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
+      parameters: 
+        - in: query 
+          name: namespace
+          description: namespace to create
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: secret
+          description: secret is needed when you want to reset/delete the value (default the same as namepsace)
+          schema:
+            type: string
+          required: false
       responses:
-        "200":
+        '200':
           description: create namespace of PV successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "400":
-          description: bad input parameter
+        '400':
+          description: bad input parameter  
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
               example:
-                code: "4001,"
+                code: 4001,
                 err_msg: this namespace has already been created
-        "500":
+        '500':
           description: internal server error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-              example:
+              example: 
                 code: 5001
-                err_msg: server error
+                err_msg: server error    
+                
   /pv/increment:
     post:
       tags:
-      - developers
-      description: |
-        By passing parameters, you can increment PV by 1 of given key in given namespace
+        - developers
       operationId: incrementPv
+      description: |
+        By passing parameters, you can increment PV by 1 of given key in given namespace (will initialize automatically)
       parameters:
-      - name: namespace
-        in: query
-        description: namespace to be incremented
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: key
-        in: query
-        description: key to be incremented
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
+        - in: query
+          name: namespace
+          description: namespace to be incremented
+          schema:
+            type: string
+          required: true
+        - in: query 
+          name: key
+          description: key to be incremented
+          schema:
+            type: string
+          required: true
       responses:
-        "200":
+        '200':
           description: increment PV successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "400":
+        '400':
           description: bad input parameters
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-              example:
+              example: 
                 code: 4001
                 err_msg: invalid namespace
-        "500":
+        '500':
           description: internal server error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-              example:
+              example: 
                 code: 5001
                 err_msg: server error
+                
   /pv/reset:
     post:
       tags:
-      - developers
+        - developers
+      operationId: resetPv
       description: |
         By passing parameters, you can reset PV of given key in given namespace with given value
-      operationId: resetPv
       parameters:
-      - name: namespace
-        in: query
-        description: namespace to be reset
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: key
-        in: query
-        description: key to be reset
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: value
-        in: query
-        description: number of PV to be reset
-        required: true
-        style: form
-        explode: true
-        schema:
-          minimum: 0
-          type: integer
-          format: int32
+        - in: query
+          name: namespace
+          description: namespace to be reset
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: secret
+          description: secret
+          schema:
+            type: string
+          required: true
+        - in: query 
+          name: key
+          description: key to be reset
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: value
+          description: number of PV to be reset
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+          required: true
       responses:
-        "200":
+        '200':
           description: reset PV successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "400":
+        '400':
           description: bad input parameters
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-              example:
+              example: 
                 code: 4001
                 err_msg: invalid namespace
-        "500":
+        '500':
           description: internal server error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-              example:
+              example: 
                 code: 5001
                 err_msg: server error
   /pv/delete:
     post:
       tags:
-      - developers
+        - developers
+      operationId: deletePv
       description: |
         By passing parameters, you can delete of given key or given namespace
-      operationId: deletePv
       parameters:
-      - name: namespace
-        in: query
-        description: namespace to be delete
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: key
-        in: query
-        description: key to be delete (without this field will cause namespace deleted)
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
+        - in: query
+          name: namespace
+          description: namespace to be delete
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: secret
+          description: secret
+          schema:
+            type: string
+          required: true
+        - in: query 
+          name: key
+          description: key to be delete
+          schema:
+            type: string
+          required: true
       responses:
-        "200":
+        '200':
           description: delete PV successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-        "400":
+        '400':
           description: bad input parameters
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-              example:
+              example: 
                 code: 4001
                 err_msg: invalid namespace
-        "500":
+        '500':
           description: internal server error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-              example:
+              example: 
                 code: 5001
-                err_msg: server error
+                err_msg: server error    
+                
 components:
   schemas:
     ErrorMessage:
-      required:
-      - code
-      - err_msg
       type: object
+      required:
+        - code
+        - err_msg
+        - data
       properties:
         code:
           type: integer
@@ -287,6 +281,20 @@ components:
         err_msg:
           type: string
           example: successfully
-      example:
-        code: 0
-        err_msg: successfully
+        data:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Data'
+          example: []
+    Data:
+      type: object 
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string 
+          example: "key"
+        value: 
+          type: string
+          example: "value"

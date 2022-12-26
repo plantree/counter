@@ -126,7 +126,7 @@ func TestGetPv(t *testing.T) {
 	defer CleanLog()
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/pv/status", nil)
+	req, _ := http.NewRequest("GET", "/pv/get", nil)
 	router.ServeHTTP(w, req)
 
 	if w.Code != 400 || !strings.Contains(w.Body.String(), "need namespace") {
@@ -134,7 +134,7 @@ func TestGetPv(t *testing.T) {
 	}
 
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("GET", "/pv/status?namespace=hello&key=world", nil)
+	req, _ = http.NewRequest("GET", "/pv/get?namespace=hello&key=world", nil)
 	router.ServeHTTP(w, req)
 
 	if w.Code != 400 || !strings.Contains(w.Body.String(), "invalid namespace") {
@@ -142,7 +142,7 @@ func TestGetPv(t *testing.T) {
 	}
 
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("GET", "/pv/status?namespace=test&key=hello", nil)
+	req, _ = http.NewRequest("GET", "/pv/get?namespace=test&key=hello", nil)
 	router.ServeHTTP(w, req)
 
 	var errMsg ErrorMessage
@@ -157,7 +157,7 @@ func TestGetPv(t *testing.T) {
 	}
 
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("GET", "/pv/status?namespace=test&key=test", nil)
+	req, _ = http.NewRequest("GET", "/pv/get?namespace=test&key=test", nil)
 	router.ServeHTTP(w, req)
 
 	err = json.Unmarshal(w.Body.Bytes(), &errMsg)
@@ -176,7 +176,7 @@ func TestGetPv(t *testing.T) {
 		t.Fail()
 	}
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("GET", "/pv/status?namespace=test", nil)
+	req, _ = http.NewRequest("GET", "/pv/get?namespace=test", nil)
 	router.ServeHTTP(w, req)
 
 	err = json.Unmarshal(w.Body.Bytes(), &errMsg)
