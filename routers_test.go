@@ -71,7 +71,7 @@ func TestCreatePv(t *testing.T) {
 	}
 }
 
-func TestIncr(t *testing.T) {
+func TestIncrement(t *testing.T) {
 	router := MockRouters()
 	defer CleanLog()
 
@@ -121,7 +121,7 @@ func TestIncr(t *testing.T) {
 	}
 }
 
-func TestGetPv(t *testing.T) {
+func TestGetPvFalse(t *testing.T) {
 	router := MockRouters()
 	defer CleanLog()
 
@@ -155,12 +155,18 @@ func TestGetPv(t *testing.T) {
 	if errMsg.Code != 4001 {
 		t.Fail()
 	}
+}
 
-	w = httptest.NewRecorder()
-	req, _ = http.NewRequest("GET", "/pv/get?namespace=test&key=test", nil)
+func TestGetPvTrue(t *testing.T) {
+	router := MockRouters()
+	defer CleanLog()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/pv/get?namespace=test&key=test", nil)
 	router.ServeHTTP(w, req)
 
-	err = json.Unmarshal(w.Body.Bytes(), &errMsg)
+	var errMsg ErrorMessage
+	err := json.Unmarshal(w.Body.Bytes(), &errMsg)
 	fmt.Println(w.Body.String(), errMsg)
 
 	if w.Code != 200 || err != nil {

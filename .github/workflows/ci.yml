@@ -1,0 +1,42 @@
+name: CI
+
+on: [push]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.18
+      - name: Checkout code
+        uses: actions/checkout@master
+      - name: Unit test
+        run: make test
+      - name: Generate coverage report
+        run: make test-coverage
+      - name: Upload Coverage report to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          directory: ./
+          fail_ci_if_error: true
+          files: ./coverage.out
+          flags: unittests
+          name: codecov-umbrella
+          verbose: true
+
+build:
+  name: Build
+  runs-on: ubuntu-latest
+  needs: [test]
+  steps:
+    - name: Setup Go
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.18
+    - name: Checkout code
+      uses: actions/checkout@master
+    - name: Build
+      run: make build
