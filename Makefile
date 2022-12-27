@@ -16,7 +16,7 @@ test:
 	go test -v
 
 test-coverage:
-	go test -coverprofile cover.out 
+	go test -coverprofile coverage.out 
 
 clean:
 	rm -rf build/*

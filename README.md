@@ -1,12 +1,10 @@
 # counter
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-[![GoReport](https://goreportcard.com/badge/github.com/plantree/counter)](https://goreportcard.com/report/github.com/plantree/counter)
-
-
-
-#### 0. Description
-
+<p align="left">
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green.svg"></a>
+<a href="https://goreportcard.com/report/github.com/plantree/counter"><img src="https://goreportcard.com/badge/github.com/plantree/counter"></a>
+<a href="https://github.com/plantree/counter/actions/workflows/ci.yml"><img src="https://github.com/plantree/counter/actions/workflows/ci.yml/badge.svg"></a>
+</p>
 A counting service for PV and UV (based on Golang and Redis)
 
 #### 1. Why do this
