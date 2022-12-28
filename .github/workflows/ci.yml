@@ -52,7 +52,8 @@ jobs:
     steps:
       - name: Executing remote ssh commands
         uses: appleboy/ssh-action@master
-        env: GIN_MODE: release
+        env: 
+          GIN_MODE: release
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
