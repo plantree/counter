@@ -65,5 +65,5 @@ jobs:
             git pull
             make build
             cp ./build/counter-service ../
-            sudo supervisorctl start counter-service
+            sudo supervisorctl update counter-service
 
