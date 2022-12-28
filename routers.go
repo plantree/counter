@@ -31,7 +31,21 @@ func isInt(s string) bool {
 	return true
 }
 
+func incrMethodCalls(method string) error {
+	_, err := G_db.Incr("call@" + method)
+	return err
+}
+
+func constructNamespace(namespace string) string {
+	return fmt.Sprintf("namespace@%s", namespace)
+}
+
+func constructKey(namespace, key string) string {
+	return fmt.Sprintf("key@%s@%s", namespace, key)
+}
+
 func isNamespaceValid(namespace string, c *gin.Context) bool {
+	namespace = constructNamespace(namespace)
 	_, err := G_db.Get(namespace)
 	if err != nil {
 		G_logger.Warn(err)
@@ -39,10 +53,6 @@ func isNamespaceValid(namespace string, c *gin.Context) bool {
 		return false
 	}
 	return true
-}
-
-func constructKey(namespace, key string) string {
-	return fmt.Sprintf("%s@%s", namespace, key)
 }
 
 func checkNamespace(namespace string, c *gin.Context) bool {
@@ -80,6 +90,7 @@ func checkNamespaceSecretKeyValue(namespace, secret, key, value string, c *gin.C
 }
 
 func checkAuthentication(namespace, secret string) bool {
+	namespace = constructNamespace(namespace)
 	result, err := G_db.Get(namespace)
 	if err != nil {
 		G_logger.Warn(err)
@@ -94,6 +105,8 @@ func checkAuthentication(namespace, secret string) bool {
 }
 
 func GetPv(c *gin.Context) {
+	incrMethodCalls("get_pv")
+
 	namespace := c.Query("namespace")
 	if ok := checkNamespace(namespace, c); !ok {
 		return
@@ -105,7 +118,7 @@ func GetPv(c *gin.Context) {
 	key := c.Query("key")
 	// get all keys under namespace
 	if key == "" {
-		newKeys, err := G_db.GetPrefixMatchKeys(namespace + "@*")
+		newKeys, err := G_db.GetPrefixMatchKeys(fmt.Sprintf("key@%s@*", namespace))
 		if err != nil {
 			G_logger.Warn(err)
 			errMsg := ErrorMessage{
@@ -173,6 +186,8 @@ func GetPv(c *gin.Context) {
 }
 
 func CreatePv(c *gin.Context) {
+	incrMethodCalls("create_pv")
+
 	namespace := c.Query("namespace")
 	if ok := checkNamespace(namespace, c); !ok {
 		return
@@ -181,6 +196,7 @@ func CreatePv(c *gin.Context) {
 	if secret == "" {
 		secret = namespace
 	}
+	namespace = constructNamespace(namespace)
 	result, _ := G_db.Get(namespace)
 	if result != nil {
 		G_logger.Warn(fmt.Sprintf("namespace[%s] exists", namespace))
@@ -211,6 +227,8 @@ func CreatePv(c *gin.Context) {
 }
 
 func IncrementPv(c *gin.Context) {
+	incrMethodCalls("increment_pv")
+
 	namespace := c.Query("namespace")
 	key := c.Query("key")
 	if ok := checkNamespaceAndKey(namespace, key, c); !ok {
@@ -239,6 +257,8 @@ func IncrementPv(c *gin.Context) {
 }
 
 func ResetPv(c *gin.Context) {
+	incrMethodCalls("reset_pv")
+
 	namespace := c.Query("namespace")
 	secret := c.Query("secret")
 	key := c.Query("key")
@@ -272,6 +292,8 @@ func ResetPv(c *gin.Context) {
 }
 
 func DeletePv(c *gin.Context) {
+	incrMethodCalls("delete_pv")
+
 	namespace := c.Query("namespace")
 	secret := c.Query("secret")
 	key := c.Query("key")
@@ -306,6 +328,9 @@ func DeletePv(c *gin.Context) {
 
 func AddRouters(r *gin.Engine, logger *logrus.Logger) {
 	G_db = NewRedisClient(DEFAULT_REDIS_URL, logger)
+	if G_db == nil {
+		panic("get redis client failed")
+	}
 	G_logger = logger
 
 	// server status

@@ -91,7 +91,7 @@ func NewLogger() *logrus.Logger {
 		rotatelogs.WithRotationTime(24*time.Hour),
 	)
 	if err != nil {
-		panic(err)
+		panic("init logger failed. err: " + err.Error())
 	}
 
 	return logger

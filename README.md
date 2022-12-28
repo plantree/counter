@@ -4,7 +4,9 @@
 <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green.svg"></a>
 <a href="https://goreportcard.com/report/github.com/plantree/counter"><img src="https://goreportcard.com/badge/github.com/plantree/counter"></a>
 <a href="https://github.com/plantree/counter/actions/workflows/ci.yml"><img src="https://github.com/plantree/counter/actions/workflows/ci.yml/badge.svg"></a>
+<a href="https://codecov.io/github/plantree/counter" > <img src="https://codecov.io/github/plantree/counter/branch/main/graph/badge.svg?token=V7I5WL9G9K"/></a>
 </p>
+
 A counting service for PV and UV (based on Golang and Redis)
 
 #### 1. Why do this
@@ -49,3 +51,6 @@ I write a personal website: https://plantree.me, to archive my blogs. In the beg
 2. https://countapi.xyz/
 3. https://github.com/gjbae1212/hit-counter
 4. https://github.com/golang-standards/project-layout/blob/master/README.md
+5. https://www.qikqiak.com/post/use-github-actions-build-go-app/
+6. https://www.liwenzhou.com/posts/Go/deploy/
+7. https://abigeater.com/archives/194

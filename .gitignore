@@ -17,3 +17,7 @@
 # Codecov
 codecov
 coverage.*
+
+# Build
+build/
+log/

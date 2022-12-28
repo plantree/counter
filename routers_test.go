@@ -30,7 +30,7 @@ func TestIsInt(t *testing.T) {
 }
 
 func TestConstructKey(t *testing.T) {
-	if constructKey("hello", "world") != "hello@world" {
+	if constructKey("hello", "world") != "key@hello@world" {
 		t.Fail()
 	}
 }
@@ -177,7 +177,7 @@ func TestGetPvTrue(t *testing.T) {
 	}
 
 	// get all keys under namespace
-	err = G_db.Set("test@test1", 1, true)
+	err = G_db.Set("key@test@test1", 1, true)
 	if err != nil {
 		t.Fail()
 	}
@@ -227,7 +227,7 @@ func TestResetPv(t *testing.T) {
 	_ = json.Unmarshal(w.Body.Bytes(), &errMsg)
 	fmt.Println(w.Body.String(), errMsg)
 
-	result, err := G_db.Get("test@test")
+	result, err := G_db.Get("key@test@test")
 	if w.Code != 200 || err != nil || errMsg.Code != 0 || result.value.(string) != "10" {
 		t.Fail()
 	}
@@ -253,11 +253,11 @@ func TestDeletePv(t *testing.T) {
 	err := json.Unmarshal(w.Body.Bytes(), &errMsg)
 	fmt.Println(w.Body.String(), errMsg)
 
-	if w.Code != 200 || errMsg.Code != 0 {
+	if w.Code != 200 || errMsg.Code != 0 || err != nil {
 		t.Fail()
 	}
 
-	result, err := G_db.Get("test@test1")
+	result, err := G_db.Get("key@test@test1")
 	if result != nil || err == nil {
 		fmt.Println(err)
 		t.Fail()
@@ -265,7 +265,13 @@ func TestDeletePv(t *testing.T) {
 }
 
 func TestTeardown(t *testing.T) {
-	G_db.Delete("test")
-	G_db.Delete("test@test")
-	G_db.Delete("test@test1")
+	G_db.Delete("namespace@test")
+	G_db.Delete("key@test@test")
+	G_db.Delete("key@test@test1")
+
+	G_db.Delete("call@create_pv")
+	G_db.Delete("call@get_pv")
+	G_db.Delete("call@reset_pv")
+	G_db.Delete("call@delete_pv")
+	G_db.Delete("call@increment_pv")
 }

@@ -9,15 +9,27 @@
 package main
 
 import (
+	"os"
+
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+func Init() *gin.Engine {
 	r := gin.Default()
 	logger := NewLogger()
 	r.Use(LoggerMiddleware(logger))
 
 	AddRouters(r, logger)
 
-	r.Run(SERVER_PORT)
+	return r
+}
+
+func main() {
+	r := Init()
+
+	if environment := os.Getenv("GIN_MODE"); environment == "release" {
+		r.Run(":8000")
+	} else {
+		r.Run(SERVER_PORT)
+	}
 }
