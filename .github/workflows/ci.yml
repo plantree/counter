@@ -60,6 +60,7 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           envs: GIN_MODE
           script: |
+            source ~/.bash_profile
             cd /home/work/project/counter/deployment
             git pull
             make build
