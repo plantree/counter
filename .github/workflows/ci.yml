@@ -64,6 +64,7 @@ jobs:
             cd /home/work/project/counter/deployment
             git pull
             make build
-            cp ./build/counter-service ../
+            cp -f ./build/counter-service ../
             sudo supervisorctl update counter-service
+            sudo supervisorctl restart counter-service
 
