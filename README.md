@@ -22,7 +22,7 @@ I write a personal website: https://plantree.me, to archive my blogs. In the beg
 2. Count service could support PV(Page-Views) and UV(Unique-Visitors).
 3. Count service could support reset/update manually, with secret to avoid malicious tampering.
 
-#### 2. counter vs [countapi](https://countapi.xyz/) vs [visitor-badge](visitor-badge)/[hit-counter](https://github.com/gjbae1212/hit-counter)
+#### 2. counter vs [countapi](https://countapi.xyz/) vs [visitor-badge](https://github.com/jwenjian/visitor-badge)/[hit-counter](https://github.com/gjbae1212/hit-counter)
 
 |                     | counter                     | countapi                   | visitor-badge/hit-counter                                    |
 | ------------------- | --------------------------- | -------------------------- | ------------------------------------------------------------ |

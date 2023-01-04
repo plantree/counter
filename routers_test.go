@@ -264,10 +264,69 @@ func TestDeletePv(t *testing.T) {
 	}
 }
 
+func TestCountNamespaces(t *testing.T) {
+	router := MockRouters()
+	defer CleanLog()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/pv/statistics/count-namespaces", nil)
+	router.ServeHTTP(w, req)
+
+	var errMsg ErrorMessage
+	err := json.Unmarshal(w.Body.Bytes(), &errMsg)
+	fmt.Println(w.Body.String(), errMsg)
+
+	if w.Code != 200 || errMsg.Code != 0 || err != nil {
+		t.Fail()
+	}
+	if len(errMsg.Data) != 1 || int(errMsg.Data[0].Value.(float64)) != 1 {
+		t.Fail()
+	}
+}
+
+func TestCountKeys(t *testing.T) {
+	router := MockRouters()
+	defer CleanLog()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/pv/statistics/count-keys", nil)
+	router.ServeHTTP(w, req)
+
+	var errMsg ErrorMessage
+	err := json.Unmarshal(w.Body.Bytes(), &errMsg)
+	fmt.Println(w.Body.String(), errMsg)
+
+	if w.Code != 200 || errMsg.Code != 0 || err != nil {
+		t.Fail()
+	}
+	if len(errMsg.Data) != 1 || int(errMsg.Data[0].Value.(float64)) != 1 {
+		t.Fail()
+	}
+}
+
+func TestCountRequests(t *testing.T) {
+	router := MockRouters()
+	defer CleanLog()
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "/pv/statistics/count-requests", nil)
+	router.ServeHTTP(w, req)
+
+	var errMsg ErrorMessage
+	err := json.Unmarshal(w.Body.Bytes(), &errMsg)
+	fmt.Println(w.Body.String(), errMsg)
+
+	if w.Code != 200 || errMsg.Code != 0 || err != nil {
+		t.Fail()
+	}
+	if len(errMsg.Data) != 1 {
+		t.Fail()
+	}
+}
+
 func TestTeardown(t *testing.T) {
 	G_db.Delete("namespace@test")
 	G_db.Delete("key@test@test")
-	G_db.Delete("key@test@test1")
 
 	G_db.Delete("call@create_pv")
 	G_db.Delete("call@get_pv")

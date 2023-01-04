@@ -21,3 +21,6 @@ coverage.*
 # Build
 build/
 log/
+
+# Redis
+*.rdb

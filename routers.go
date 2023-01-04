@@ -326,6 +326,66 @@ func DeletePv(c *gin.Context) {
 	c.JSON(http.StatusOK, errMsg)
 }
 
+func CountNamespaces(c *gin.Context) {
+	allKeys, err := G_db.GetPrefixMatchKeys("namespace@*")
+	if err != nil {
+		errMsg := ErrorMessage{
+			Code:   5001,
+			ErrMsg: fmt.Sprintf("internal error. err: %v", err),
+		}
+		c.JSON(http.StatusInternalServerError, errMsg)
+		return
+	}
+	errMsg := ErrorMessage{
+		Code:   0,
+		ErrMsg: "count namespaces successfully",
+		Data: []Data{
+			{Key: "namespace count", Value: len(allKeys)},
+		},
+	}
+	c.JSON(http.StatusOK, errMsg)
+}
+
+func CountKeys(c *gin.Context) {
+	allKeys, err := G_db.GetPrefixMatchKeys("key@*")
+	if err != nil {
+		errMsg := ErrorMessage{
+			Code:   5001,
+			ErrMsg: fmt.Sprintf("internal error. err: %v", err),
+		}
+		c.JSON(http.StatusInternalServerError, errMsg)
+		return
+	}
+	errMsg := ErrorMessage{
+		Code:   0,
+		ErrMsg: "count keys successfully",
+		Data: []Data{
+			{Key: "keys count", Value: len(allKeys)},
+		},
+	}
+	c.JSON(http.StatusOK, errMsg)
+}
+
+func CountRequests(c *gin.Context) {
+	allKeys, err := G_db.GetPrefixMatchKeys("call@*")
+	if err != nil {
+		errMsg := ErrorMessage{
+			Code:   5001,
+			ErrMsg: fmt.Sprintf("internal error. err: %v", err),
+		}
+		c.JSON(http.StatusInternalServerError, errMsg)
+		return
+	}
+	errMsg := ErrorMessage{
+		Code:   0,
+		ErrMsg: "count requests successfully",
+		Data: []Data{
+			{Key: "requests count", Value: len(allKeys)},
+		},
+	}
+	c.JSON(http.StatusOK, errMsg)
+}
+
 func AddRouters(r *gin.Engine, logger *logrus.Logger) {
 	G_db = NewRedisClient(DEFAULT_REDIS_URL, logger)
 	if G_db == nil {
@@ -348,4 +408,11 @@ func AddRouters(r *gin.Engine, logger *logrus.Logger) {
 	r.POST("/pv/reset", ResetPv)
 
 	r.POST("/pv/delete", DeletePv)
+
+	// statistics API
+	r.GET("/pv/statistics/count-namespaces", CountNamespaces)
+
+	r.GET("/pv/statistics/count-keys", CountKeys)
+
+	r.GET("/pv/statistics/count-requests", CountRequests)
 }

@@ -3,7 +3,7 @@ package main
 import "time"
 
 const (
-	SERVER_PORT = ":8080"
+	SERVER_PORT = ":8000"
 
 	LOG_FILE_PATH = "log"
 	LOG_FILE_NAME = "counter-service.log"
