@@ -247,6 +247,7 @@ func IncrementPv(c *gin.Context) {
 			ErrMsg: "internal error",
 		}
 		c.JSON(http.StatusInternalServerError, errMsg)
+		return
 	}
 	errMsg := ErrorMessage{
 		Code:   0,
@@ -283,6 +284,7 @@ func ResetPv(c *gin.Context) {
 			ErrMsg: "internal error",
 		}
 		c.JSON(http.StatusInternalServerError, errMsg)
+		return
 	}
 	errMsg := ErrorMessage{
 		Code:   0,
@@ -318,6 +320,7 @@ func DeletePv(c *gin.Context) {
 			ErrMsg: "internal error",
 		}
 		c.JSON(http.StatusInternalServerError, errMsg)
+		return
 	}
 	errMsg := ErrorMessage{
 		Code:   0,
