@@ -74,6 +74,7 @@ func NewLogger() *logrus.Logger {
 
 	// new logger
 	logger := logrus.New()
+	logger.SetReportCaller(true)
 	logger.Out = io.MultiWriter(f, os.Stdout)
 	logger.SetLevel(logrus.DebugLevel)
 	logger.SetFormatter(&LogFormat{

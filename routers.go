@@ -33,6 +33,9 @@ func isInt(s string) bool {
 
 func incrMethodCalls(method string) error {
 	_, err := G_db.Incr("call@" + method)
+	if err != nil {
+		G_logger.Errorf("incr method calls failed. err: %v", err)
+	}
 	return err
 }
 
@@ -57,7 +60,7 @@ func isNamespaceValid(namespace string, c *gin.Context) bool {
 
 func checkNamespace(namespace string, c *gin.Context) bool {
 	if namespace == "" || strings.Contains(namespace, "@") {
-		c.JSON(http.StatusBadRequest, "need namespace (namespace should not contain @)")
+		c.JSON(http.StatusBadRequest, "need namespace without @")
 		return false
 	}
 	return true
@@ -65,7 +68,7 @@ func checkNamespace(namespace string, c *gin.Context) bool {
 
 func checkNamespaceAndKey(namespace, key string, c *gin.Context) bool {
 	if namespace == "" || strings.Contains(namespace, "@") || key == "" {
-		c.JSON(http.StatusBadRequest, "need namespace and key (namespace should not contain @)")
+		c.JSON(http.StatusBadRequest, "need namespace without @ and key")
 		return false
 	}
 	return true
@@ -74,7 +77,7 @@ func checkNamespaceAndKey(namespace, key string, c *gin.Context) bool {
 func checkNamespaceSecretKey(namespace, secret, key string, c *gin.Context) bool {
 	if namespace == "" || strings.Contains(namespace, "@") ||
 		secret == "" || key == "" {
-		c.JSON(http.StatusBadRequest, "need namespace, secret and key (namespace should not contain @)")
+		c.JSON(http.StatusBadRequest, "need namespace without @, secret and key")
 		return false
 	}
 	return true
@@ -83,7 +86,7 @@ func checkNamespaceSecretKey(namespace, secret, key string, c *gin.Context) bool
 func checkNamespaceSecretKeyValue(namespace, secret, key, value string, c *gin.Context) bool {
 	if namespace == "" || strings.Contains(namespace, "@") ||
 		secret == "" || key == "" || value == "" || !isInt(value) {
-		c.JSON(http.StatusBadRequest, "need namespace, secret, key and valid value (namespace should not contain @)")
+		c.JSON(http.StatusBadRequest, "need namespace without @, secret, key and valid value (integer)")
 		return false
 	}
 	return true
@@ -379,11 +382,22 @@ func CountRequests(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errMsg)
 		return
 	}
+	requestCount := 0
+	for _, key := range allKeys {
+		result, err := G_db.Get(key)
+		if err != nil {
+			G_logger.Errorf("get key %s failed. err: %v", key, err)
+			continue
+		}
+		if value, err := strconv.Atoi(result.value.(string)); err == nil {
+			requestCount += value
+		}
+	}
 	errMsg := ErrorMessage{
 		Code:   0,
 		ErrMsg: "count requests successfully",
 		Data: []Data{
-			{Key: "requests count", Value: len(allKeys)},
+			{Key: "requests count", Value: requestCount},
 		},
 	}
 	c.JSON(http.StatusOK, errMsg)
