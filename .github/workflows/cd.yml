@@ -67,7 +67,7 @@ jobs:
             cd /home/work/project/counter/deployment
             git pull
             make build
+            ps -aux | grep counter-service | grep -v grep | awk '{print $2}' | sudo xargs kill -15
             cp -f ./build/counter-service ../
-            sudo supervisorctl update counter-service
-            sudo supervisorctl restart counter-service
+            sudo ./counter-service &
 

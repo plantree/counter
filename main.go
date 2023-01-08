@@ -44,7 +44,7 @@ func main() {
 	r := Init()
 
 	if environment := os.Getenv("GIN_MODE"); environment == "release" {
-		r.Run(":8000")
+		r.Run(":80")
 	} else {
 		r.Run(SERVER_PORT)
 	}
