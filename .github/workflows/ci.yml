@@ -61,6 +61,7 @@ jobs:
           envs: GIN_MODE
           script: |
             source ~/.bash_profile
+            export GIN_MODE=release
             cd /home/work/project/counter/deployment
             git pull
             make build
