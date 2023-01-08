@@ -69,5 +69,6 @@ jobs:
             make build
             ps -aux | grep counter-service | grep -v grep | awk '{print $2}' | sudo xargs kill -15
             cp -f ./build/counter-service ../
+            cd ..
             sudo ./counter-service &
 
