@@ -30,6 +30,8 @@ func CORSMiddleware() gin.HandlerFunc {
 }
 
 func Init() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
+
 	r := gin.Default()
 	logger := NewLogger()
 	r.Use(LoggerMiddleware(logger))
