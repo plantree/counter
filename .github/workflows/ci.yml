@@ -69,3 +69,4 @@ jobs:
             cp -f ./build/counter-service ../
             cd ..
             sudo ./counter-service &
+            exit
