@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -31,6 +32,16 @@ func TestIsInt(t *testing.T) {
 
 func TestConstructKey(t *testing.T) {
 	if constructKey("hello", "world") != "key@hello@world" {
+		t.Fail()
+	}
+}
+
+func TestGenerateSecret(t *testing.T) {
+	namespace := "hello"
+	secret := "world"
+	encryptSecret, err := generateScrect(namespace, secret)
+	realSecret := fmt.Sprintf("%s", md5.Sum([]byte(namespace+secret)))
+	if err != nil || encryptSecret != realSecret {
 		t.Fail()
 	}
 }

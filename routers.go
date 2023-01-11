@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/md5"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -58,6 +59,16 @@ func isNamespaceValid(namespace string, c *gin.Context) bool {
 	return true
 }
 
+// encrypt the password
+func generateScrect(namespace string, secret string) (string, error) {
+	h := md5.New()
+	_, err := h.Write([]byte(namespace + secret))
+	if err != nil {
+		return "", err
+	}
+	return string(h.Sum(nil)), nil
+}
+
 func checkNamespace(namespace string, c *gin.Context) bool {
 	if namespace == "" || strings.Contains(namespace, "@") {
 		c.JSON(http.StatusBadRequest, "need namespace without @")
@@ -99,7 +110,12 @@ func checkAuthentication(namespace, secret string) bool {
 		G_logger.Warn(err)
 		return false
 	}
-	if result.value.(string) != secret {
+	compareScript, err := generateScrect(namespace, secret)
+	if err != nil {
+		G_logger.Warn(err)
+		return false
+	}
+	if result.value.(string) != compareScript {
 		errMsg := fmt.Errorf("secret is invalid")
 		G_logger.Warn(errMsg)
 		return false
@@ -210,8 +226,17 @@ func CreatePv(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errMsg)
 		return
 	}
-
-	err := G_db.Set(namespace, secret, false)
+	secret, err := generateScrect(namespace, secret)
+	if err != nil {
+		G_logger.Warn(err)
+		errMsg := ErrorMessage{
+			Code:   5001,
+			ErrMsg: "internal error",
+		}
+		c.JSON(http.StatusInternalServerError, errMsg)
+		return
+	}
+	err = G_db.Set(namespace, secret, false)
 	if err != nil {
 		G_logger.Warn(err)
 		errMsg := ErrorMessage{
